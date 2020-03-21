@@ -10,7 +10,9 @@ const { exec } = require("child_process")
 
 var app = express()
 
-const port = 3000
+const port = process.env.NODE_PORT || 3000
+
+const server = process.env.NODE_SERVER || "localhost"
 
 app.use(logger("dev"))
 app.use(express.json())
@@ -87,7 +89,7 @@ app.post("/save_invoice_pdf", (req, res) => {
     .launch({ headless: true })
     .then(browser => (_browser = browser))
     .then(browser => (_page = browser.newPage()))
-    .then(page => page.goto(url, { waitUntil: "networkidle0", timeout: 10000 }))
+    .then(page => page.goto(url, { waitUntil: "networkidle2", timeout: 10000 }))
     .then(() => _page)
     .then(page =>
       page.pdf({
@@ -100,6 +102,6 @@ app.post("/save_invoice_pdf", (req, res) => {
     .catch(err => res.send({ err_msg: err.message }))
 })
 
-app.listen(port, "localhost", () => {
-  console.log(`File server is up and running on address: localhost:${port}`)
+app.listen(port, server, () => {
+  console.log(`File server is up and running on address: ${server}:${port}`)
 })
